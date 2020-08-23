@@ -12,28 +12,26 @@ import java.io.IOException
 
 object SaveImageFile {
 
-    suspend fun saveImageToInternalStorage(context: Context, bitmapImage: Bitmap, filename: String, name: String): String =
-        withContext(Dispatchers.Default) {
-            val cw = ContextWrapper(context)
-            val directory = cw.getDir(filename, Context.MODE_PRIVATE)
-            // Create imageDir
-            val mypath = File(directory, "$name.jpg")
-            var fos: FileOutputStream? = null
+    suspend fun saveImageToInternalStorage(context: Context , bitmapImage: Bitmap , filename: String , name: String): String = withContext(Dispatchers.Default) {
+
+        val cw = ContextWrapper(context)
+        val directory = cw.getDir(filename , Context.MODE_PRIVATE)
+        val mypath = File(directory , "$name.jpg")
+        var fos: FileOutputStream? = null
+        try {
+            fos = FileOutputStream(mypath)
+            bitmapImage.compress(Bitmap.CompressFormat.PNG , 100 , fos)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
             try {
-                fos = FileOutputStream(mypath)
-                // Use the compress method on the BitMap object to write image to the OutputStream
-                bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos)
-            } catch (e: Exception) {
+                fos!!.close()
+            } catch (e: IOException) {
                 e.printStackTrace()
-            } finally {
-                try {
-                    fos!!.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
             }
-            mypath.absolutePath
         }
+        mypath.absolutePath
+    }
 
     suspend fun deleteImageFile(uri: String) = withContext(Dispatchers.Default) {
         val fdelete = File(uri)
@@ -41,5 +39,4 @@ object SaveImageFile {
             fdelete.delete()
         }
     }
-
 }

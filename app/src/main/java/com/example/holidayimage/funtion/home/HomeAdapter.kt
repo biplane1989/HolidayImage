@@ -13,28 +13,23 @@ import com.bumptech.glide.Glide
 import com.example.holidayimage.R
 import java.util.concurrent.Executors
 
-class HomeAdapter(val onClicked: OnClicked) :
-    ListAdapter<ImageItemView, HomeAdapter.ViewHolder>(
-        AsyncDifferConfig.Builder(ImageDiffCallBack())
-            .setBackgroundThreadExecutor(Executors.newSingleThreadExecutor()).build()
-    ) {
+class HomeAdapter(val onClicked: OnClicked) : ListAdapter<ImageItemView , HomeAdapter.ViewHolder>(
+    AsyncDifferConfig.Builder(ImageDiffCallBack()).setBackgroundThreadExecutor(Executors.newSingleThreadExecutor()).build()
+) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeAdapter.ViewHolder {
-        val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_home, parent, false)
-        return ViewHolder(itemView, this)
+    override fun onCreateViewHolder(parent: ViewGroup , viewType: Int): HomeAdapter.ViewHolder {
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_home , parent , false)
+        return ViewHolder(itemView , this)
     }
 
-
-    override fun onBindViewHolder(holder: HomeAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: HomeAdapter.ViewHolder , position: Int) {
         holder.bind(onClicked)
     }
 
-
-    class ViewHolder(itemView: View, val adapter: HomeAdapter) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View , val adapter: HomeAdapter) : RecyclerView.ViewHolder(itemView) {
 
         val ivServer: ImageView = itemView.findViewById(R.id.iv_server)
-        val tvLoad: TextView = itemView.findViewById(R.id.tv_load)
+        val ivLoad : ImageView = itemView.findViewById(R.id.iv_download)
         val progressImage: ProgressBar = itemView.findViewById(R.id.progress_image)
 
         fun bind(onClicked: OnClicked) {
@@ -43,13 +38,13 @@ class HomeAdapter(val onClicked: OnClicked) :
             Glide.with(itemView.context).load(imageItem.imageItem.thumb).into(ivServer)
 
             if (imageItem.imageItem.downloaded) {
-                tvLoad.visibility = View.GONE
+                ivLoad.visibility = View.INVISIBLE
             } else {
-                tvLoad.visibility = View.VISIBLE
+                ivLoad.visibility = View.VISIBLE
             }
 
-            tvLoad.setOnClickListener(View.OnClickListener {
-                onClicked.onClicked(adapterPosition, imageItem, tvLoad, progressImage)
+            ivLoad.setOnClickListener(View.OnClickListener {
+                onClicked.onClicked(adapterPosition , imageItem , ivLoad , progressImage)
             })
         }
     }

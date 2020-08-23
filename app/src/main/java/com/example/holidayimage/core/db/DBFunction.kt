@@ -5,6 +5,7 @@ import com.example.holidayimage.`object`.ImageGallery
 import com.example.holidayimage.core.db.entity.ImageEntity
 
 object DBFunction {
+
     suspend fun saveImage(url: String, filePath: String): ImageFile? {
         val imageEntity = ImageEntity(null, url, filePath)
         val id = ImageDatabase.getInstance().imageDAO().insert(imageEntity)

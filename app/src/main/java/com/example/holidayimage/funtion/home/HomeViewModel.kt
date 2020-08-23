@@ -18,15 +18,8 @@ class HomeViewModel : ViewModel() {
     private var images: MutableLiveData<ArrayList<ImageItemView>> = MutableLiveData()
     private var _images = ArrayList<ImageItemView>()
 
-    //    private val loadMoreInfo = MutableLiveData<LoadMoreInfo>()
-    //    private val _LoadMoreInfo = LoadMoreInfo(LoadMoreState.DONE)
-
     init {
         images.value = ArrayList()
-        //        initData()
-        //        CoroutineScope(Dispatchers.Default).launch {
-        //            refresherData()
-        //        }
     }
 
     fun getListImage(): MutableLiveData<ArrayList<ImageItemView>> {
@@ -43,15 +36,6 @@ class HomeViewModel : ViewModel() {
         getData()
     }
 
-    fun initData() {
-        CoroutineScope(Dispatchers.Default).launch {
-            for (item in ApiHelper.getListPhoto(page)) {
-                _images.add(ImageItemView(item))
-            }
-            images.postValue(_images)
-        }
-    }
-
     suspend fun getData() {
         for (item in ApiHelper.getListPhoto(page)) {
             _images.add(ImageItemView(item))
@@ -62,10 +46,6 @@ class HomeViewModel : ViewModel() {
 
     suspend fun saveImage(context: Context , imageItem: ImageItem , position: Int): ImageFile? {
         return FileDownloadManager.downloadImage(context , imageItem)
-        //        val imageFile = FileDownloadManager.downloadImage(context, imageItem)
-        //        if (imageFile == null) {
-        //
-        //        }
     }
 
     suspend fun synchronizedData() {
@@ -74,7 +54,7 @@ class HomeViewModel : ViewModel() {
             for (image in _images) {
                 newListImage.add(image)
             }
-            var position = 0;
+            var position = 0
             for (image in newListImage) {
                 if (FileDownloadManager.isDownloaded(ImageItem(image.imageItem.url , image.imageItem.thumb , image.imageItem.raw , image.imageItem.downloaded))) {
                     val newImage = image.copy()

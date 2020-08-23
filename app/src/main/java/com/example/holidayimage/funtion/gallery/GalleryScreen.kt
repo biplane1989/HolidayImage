@@ -21,9 +21,9 @@ import kotlinx.android.synthetic.main.activity_home_screen.*
 
 class GalleryScreen : Fragment(), OnGalleryClicked {
 
-    lateinit var galleryViewModel: GalleryViewModel
-    lateinit var galleryBinding: ActivityGalleryScreenBinding
-    lateinit var adapter: GalleryAdapter
+    private lateinit var galleryViewModel: GalleryViewModel
+    private lateinit var galleryBinding: ActivityGalleryScreenBinding
+    private lateinit var adapter: GalleryAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,15 +59,13 @@ class GalleryScreen : Fragment(), OnGalleryClicked {
 
     private fun init() {
         adapter = GalleryAdapter(this)
-        rv_gallery.layoutManager = GridLayoutManager(context, 3, RecyclerView.VERTICAL, false)
+        rv_gallery.layoutManager = GridLayoutManager(context, 2, RecyclerView.VERTICAL, false)
         rv_gallery.setHasFixedSize(true)
         rv_gallery.adapter = adapter
 
     }
 
     override fun onClick(imageGallery: ImageGallery) {
-        Log.d("001", "onClick: ")
-
         val directions = GalleryScreenDirections.actionGalleryToDetail().setId(imageGallery.id)
         NavHostFragment.findNavController(this).navigate(directions)
     }

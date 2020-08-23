@@ -13,5 +13,4 @@ class GalleryDiffCallBack : DiffUtil.ItemCallback<ImageGallery>() {
     override fun areContentsTheSame(oldItem: ImageGallery, newItem: ImageGallery): Boolean {
         return oldItem.equals(newItem)
     }
-
 }

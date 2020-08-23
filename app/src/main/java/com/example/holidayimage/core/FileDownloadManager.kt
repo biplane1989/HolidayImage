@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.text.TextUtils
-import android.util.Log
 import com.example.holidayimage.`object`.ImageFile
 import com.example.holidayimage.`object`.ImageGallery
 import com.example.holidayimage.`object`.ImageItem
@@ -12,7 +11,6 @@ import com.example.holidayimage.core.db.DBFunction
 import com.example.holidayimage.core.db.entity.ImageEntity
 import com.example.holidayimage.utils.Constance
 import com.example.holidayimage.utils.SaveImageFile
-import java.lang.Exception
 
 
 object FileDownloadManager {

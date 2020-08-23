@@ -29,5 +29,4 @@ class DetailViewModel : ViewModel() {
             FileDownloadManager.deleteImage(_imageDetail)
         }
     }
-
 }

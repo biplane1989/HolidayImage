@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -27,12 +28,12 @@ import kotlinx.android.synthetic.main.activity_home_screen.*
 import kotlinx.coroutines.*
 
 class HomeScreen : Fragment() , OnClicked {
+
     val TAG = "001"
     lateinit var homeViewModel: HomeViewModel
     lateinit var homeBinding: ActivityHomeScreenBinding
     private lateinit var adapter: HomeAdapter
     private var statusLoadMore = true
-
 
     override fun onCreateView(inflater: LayoutInflater , container: ViewGroup? , savedInstanceState: Bundle?): View? {
 
@@ -48,11 +49,8 @@ class HomeScreen : Fragment() , OnClicked {
         super.onViewCreated(view , savedInstanceState)
 
         if (isNetworkConnected()) {
-
             CoroutineScope(Dispatchers.Main).launch {
                 init()
-                tv_internet.visibility = View.INVISIBLE
-
                 homeViewModel.getListImage().observe(viewLifecycleOwner , Observer { listImage ->
                     adapter.submitList(ArrayList(listImage))
                     Log.d(TAG , "getListSize: list size " + listImage.size)
@@ -60,17 +58,19 @@ class HomeScreen : Fragment() , OnClicked {
                 homeViewModel.refresherData()
 
                 // go to gallery screen
-                homeBinding.fab.setOnClickListener(View.OnClickListener {
+                fab_gallery.setOnClickListener(View.OnClickListener {
                     val directions = HomeScreenDirections.actionHoneToGallery()
                     NavHostFragment.findNavController(this@HomeScreen).navigate(directions)
                 })
             }
+        } else {
+            tv_internet.visibility = View.VISIBLE
         }
     }
 
     private fun init() {
         adapter = HomeAdapter(this)
-        rv_images.layoutManager = GridLayoutManager(context , 3 , RecyclerView.VERTICAL , false)
+        rv_images.layoutManager = GridLayoutManager(context , 2 , RecyclerView.VERTICAL , false)
         rv_images.setHasFixedSize(true)
         rv_images.adapter = adapter
 
@@ -78,25 +78,20 @@ class HomeScreen : Fragment() , OnClicked {
     }
 
     // item clicked
-    override fun onClicked(position: Int , imageItemView: ImageItemView , textView: TextView , progressBar: ProgressBar) {
+    override fun onClicked(position: Int , imageItemView: ImageItemView , imageView: ImageView , progressBar: ProgressBar) {
         CoroutineScope(Dispatchers.Main).launch {
-            fab.isEnabled = false
+            fab_gallery.isEnabled = false
             progressBar.visibility = View.VISIBLE
-            if (context?.let {
-                    homeViewModel.saveImage(
-                        it , imageItemView.imageItem , position
-                    )
-                } == null) {
+            if (context?.let { homeViewModel.saveImage(it , imageItemView.imageItem , position) } == null) {
                 Toast.makeText(context , Constance.TITLE_DOWNLOAD_UNSUCCESSFUL , Toast.LENGTH_SHORT).show()
-
             } else {
                 Toast.makeText(context , Constance.TITLE_DOWNLOAD_SUCCESSFUL , Toast.LENGTH_SHORT).show()
                 homeViewModel.synchronizedData()
             }
 
-            textView.visibility = View.INVISIBLE
+            imageView.visibility = View.INVISIBLE
             progressBar.visibility = View.INVISIBLE
-            fab.isEnabled = true
+            fab_gallery.isEnabled = true
         }
     }
 
@@ -107,7 +102,6 @@ class HomeScreen : Fragment() , OnClicked {
                 super.onScrolled(recyclerView , dx , dy)
 
                 val gridLayoutManager: GridLayoutManager = homeBinding.rvImages.layoutManager as GridLayoutManager
-
                 if (statusLoadMore) {
                     if (gridLayoutManager.findLastCompletelyVisibleItemPosition() == homeViewModel.getListSize() - 1) {
                         loadMore()
@@ -124,7 +118,7 @@ class HomeScreen : Fragment() , OnClicked {
     private fun loadMore() {
         statusLoadMore = false
         CoroutineScope(Dispatchers.Main).launch {
-            fab.isEnabled = false
+            fab_gallery.isEnabled = false
             progress_bar.visibility = View.VISIBLE
 
             homeViewModel.getData()
@@ -132,7 +126,7 @@ class HomeScreen : Fragment() , OnClicked {
 
             progress_bar.visibility = View.INVISIBLE
             statusLoadMore = true
-            fab.isEnabled = true
+            fab_gallery.isEnabled = true
         }
     }
 

@@ -8,5 +8,4 @@ class MyApplication : Application() {
         super.onCreate()
         ImageDatabase.create(this)
     }
-
 }

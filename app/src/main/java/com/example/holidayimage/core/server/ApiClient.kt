@@ -24,7 +24,5 @@ object ApiClient {
                 .build()
 
             return retrofit.create(ApiInterface::class.java)
-
         }
-
 }

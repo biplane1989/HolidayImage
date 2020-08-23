@@ -3,9 +3,7 @@ package com.example.holidayimage.core
 import com.example.holidayimage.`object`.ImageItem
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import kotlincodes.com.retrofitwithkotlin.retrofit.ApiClient
-import kotlinx.coroutines.*
 import okhttp3.ResponseBody
-import retrofit2.Call
 
 object ApiHelper {
 
@@ -21,7 +19,7 @@ object ApiHelper {
     }
 
     suspend fun getPhoto(url: String): ResponseBody {
-        var newUrl = url + "&w=" + 300 + "&dpi=" + 100
+        var newUrl = url + "&w=" + 300 + "&dpi=" + 1
         return ApiClient.getClient.downloadPhoto(newUrl)
     }
 

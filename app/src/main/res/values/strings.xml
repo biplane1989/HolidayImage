@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Holiday Image</string>
+    <string name="title_notification">Internet not connection !</string>
+    <string name="title_load">L o a d</string>
+</resources>

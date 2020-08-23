@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main"
+    app:startDestination="@+id/fra_home"
+    tools:ignore="UnusedNavigation">
+
+    <fragment
+        android:id="@+id/fra_home"
+        android:name="com.example.holidayimage.funtion.home.HomeScreen"
+        android:label="home screen"
+        tools:layout="@layout/activity_home_screen">
+
+        <action
+            android:id="@+id/action_hone_to_gallery"
+            app:destination="@id/fra_gallery"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/fra_gallery"
+        android:name="com.example.holidayimage.funtion.gallery.GalleryScreen"
+        android:label="gallery screen"
+        tools:layout="@layout/activity_gallery_screen">
+
+        <action
+            android:id="@+id/action_gallery_to_detail"
+            app:destination="@+id/fra_detail"
+            app:popUpTo="@+id/fra_detail"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_gallery_to_home"
+            app:destination="@+id/fra_home"
+            app:popUpTo="@+id/fra_home"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fra_detail"
+        android:name="com.example.holidayimage.funtion.detail.DetailScreen"
+        android:label="detail screen"
+        tools:layout="@layout/activity_detail_screen">
+        <argument
+            android:name="id"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_detail_to_gallery"
+            app:destination="@+id/fra_gallery"
+            app:popUpTo="@+id/fra_gallery"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+</navigation>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_size_internet">30sp</dimen>
+    <dimen name="witdth_progressbar">100dp</dimen>
+    <dimen name="height_progressbar">100dp</dimen>
+    <dimen name="magrin_fab">15dp</dimen>
+    <dimen name="scroll_barsize">15dp</dimen>
+    <dimen name="height_image_item">200dp</dimen>
+    <dimen name="size_image_progressbar">50dp</dimen>
+    <dimen name="text_size_load">35sp</dimen>
+    <dimen name="margin_2dp">2dp</dimen>
+    <dimen name="cardview_corner">5dp</dimen>
+</resources>

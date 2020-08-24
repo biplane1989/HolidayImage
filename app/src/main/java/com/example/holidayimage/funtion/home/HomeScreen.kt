@@ -61,7 +61,6 @@ class HomeScreen : Fragment() , OnClicked {
             tv_internet.visibility = View.VISIBLE
         }
         // go to gallery screen
-
         fab_gallery.setOnClickListener(View.OnClickListener {
             val directions = HomeScreenDirections.actionHoneToGallery()
             NavHostFragment.findNavController(this@HomeScreen).navigate(directions)
@@ -79,19 +78,24 @@ class HomeScreen : Fragment() , OnClicked {
 
     // item clicked
     override fun onClicked(position: Int , imageItemView: ImageItemView , imageView: ImageView , progressBar: ProgressBar) {
-        CoroutineScope(Dispatchers.Main).launch {
-            fab_gallery.isEnabled = false
-            progressBar.visibility = View.VISIBLE
-            if (context?.let { homeViewModel.saveImage(it , imageItemView.imageItem , position) } == null) {
-                Toast.makeText(context , R.string.title_download_unsuccessful , Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(context , R.string.title_download_successful , Toast.LENGTH_SHORT).show()
-                homeViewModel.synchronizedData()
+        if (isNetworkConnected()) {
+            CoroutineScope(Dispatchers.Main).launch {
+                imageView.isEnabled = false
+                fab_gallery.isEnabled = false
+                progressBar.visibility = View.VISIBLE
+                if (context?.let { homeViewModel.saveImage(it , imageItemView.imageItem , position) } == null) {
+                    imageView.isEnabled = true
+                    Toast.makeText(context , R.string.title_download_unsuccessful , Toast.LENGTH_SHORT).show()
+                } else {
+                    homeViewModel.synchronizedData()
+                    imageView.visibility = View.INVISIBLE
+                    Toast.makeText(context , R.string.title_download_successful , Toast.LENGTH_SHORT).show()
+                }
+                progressBar.visibility = View.INVISIBLE
+                fab_gallery.isEnabled = true
             }
-
-            imageView.visibility = View.INVISIBLE
-            progressBar.visibility = View.INVISIBLE
-            fab_gallery.isEnabled = true
+        } else {
+            Toast.makeText(context , R.string.title_notification , Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -26,21 +26,47 @@ class HomeAdapter(val onClicked: OnClicked) : ListAdapter<ImageItemView , HomeAd
         holder.bind(onClicked)
     }
 
+    override fun submitList(list: MutableList<ImageItemView>?) {
+
+        if (list != null) {
+            super.submitList(ArrayList(list))
+        } else {
+            super.submitList(ArrayList())
+        }
+
+    }
+
     class ViewHolder(itemView: View , val adapter: HomeAdapter) : RecyclerView.ViewHolder(itemView) {
 
         val ivServer: ImageView = itemView.findViewById(R.id.iv_server)
-        val ivLoad : ImageView = itemView.findViewById(R.id.iv_download)
+        val ivLoad: ImageView = itemView.findViewById(R.id.iv_download)
         val progressImage: ProgressBar = itemView.findViewById(R.id.progress_image)
 
         fun bind(onClicked: OnClicked) {
             val imageItem = adapter.getItem(adapterPosition)
 
+            progressImage.visibility = View.INVISIBLE
+
+
+
+
             Glide.with(itemView.context).load(imageItem.imageItem.thumb).into(ivServer)
 
             if (imageItem.imageItem.downloaded) {
+
                 ivLoad.visibility = View.INVISIBLE
+                progressImage.visibility = View.INVISIBLE
+
             } else {
-                ivLoad.visibility = View.VISIBLE
+                if (imageItem.isDownloading) {
+                    //                ivLoad.isEnabled = false
+                    ivLoad.visibility = View.INVISIBLE
+                    progressImage.visibility = View.VISIBLE
+                }else{
+                    ivLoad.visibility = View.VISIBLE
+                    progressImage.visibility = View.INVISIBLE
+                }
+
             }
 
             ivLoad.setOnClickListener(View.OnClickListener {

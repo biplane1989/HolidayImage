@@ -18,8 +18,8 @@ object FileDownloadManager {
     suspend fun downloadImage(context: Context, imageItem: ImageItem): ImageFile? {
 
         val data: Bitmap
-        val response = ApiHelper.getPhoto(imageItem.raw)
         try {
+            val response = ApiHelper.getPhoto(imageItem.raw)
             data = BitmapFactory.decodeStream(response.byteStream())
             val path = SaveImageFile.saveImageToInternalStorage(context, data, Constance.FOLDER_NAME, imageItem.url)
             return DBFunction.saveImage(imageItem.url, path)

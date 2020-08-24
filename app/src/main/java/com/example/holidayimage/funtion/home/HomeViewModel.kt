@@ -13,7 +13,6 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
 
-    val TAG = "001"
     private var page: Int = 1;
     private var images: MutableLiveData<ArrayList<ImageItemView>> = MutableLiveData()
     private var _images = ArrayList<ImageItemView>()

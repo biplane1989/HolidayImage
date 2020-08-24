@@ -47,25 +47,24 @@ class HomeScreen : Fragment() , OnClicked {
 
     override fun onViewCreated(view: View , savedInstanceState: Bundle?) {
         super.onViewCreated(view , savedInstanceState)
-
+        init()
         if (isNetworkConnected()) {
             CoroutineScope(Dispatchers.Main).launch {
-                init()
                 homeViewModel.getListImage().observe(viewLifecycleOwner , Observer { listImage ->
                     adapter.submitList(ArrayList(listImage))
                     Log.d(TAG , "getListSize: list size " + listImage.size)
                 })
                 homeViewModel.refresherData()
 
-                // go to gallery screen
-                fab_gallery.setOnClickListener(View.OnClickListener {
-                    val directions = HomeScreenDirections.actionHoneToGallery()
-                    NavHostFragment.findNavController(this@HomeScreen).navigate(directions)
-                })
             }
         } else {
             tv_internet.visibility = View.VISIBLE
         }
+        // go to gallery screen
+        fab_gallery.setOnClickListener(View.OnClickListener {
+            val directions = HomeScreenDirections.actionHoneToGallery()
+            NavHostFragment.findNavController(this@HomeScreen).navigate(directions)
+        })
     }
 
     private fun init() {
@@ -79,19 +78,24 @@ class HomeScreen : Fragment() , OnClicked {
 
     // item clicked
     override fun onClicked(position: Int , imageItemView: ImageItemView , imageView: ImageView , progressBar: ProgressBar) {
-        CoroutineScope(Dispatchers.Main).launch {
-            fab_gallery.isEnabled = false
-            progressBar.visibility = View.VISIBLE
-            if (context?.let { homeViewModel.saveImage(it , imageItemView.imageItem , position) } == null) {
-                Toast.makeText(context , Constance.TITLE_DOWNLOAD_UNSUCCESSFUL , Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(context , Constance.TITLE_DOWNLOAD_SUCCESSFUL , Toast.LENGTH_SHORT).show()
-                homeViewModel.synchronizedData()
+        if (isNetworkConnected()) {
+            CoroutineScope(Dispatchers.Main).launch {
+                imageView.isEnabled = false
+                fab_gallery.isEnabled = false
+                progressBar.visibility = View.VISIBLE
+                if (context?.let { homeViewModel.saveImage(it , imageItemView.imageItem , position) } == null) {
+                    imageView.isEnabled = true
+                    Toast.makeText(context , R.string.title_download_unsuccessful , Toast.LENGTH_SHORT).show()
+                } else {
+                    homeViewModel.synchronizedData()
+                    imageView.visibility = View.INVISIBLE
+                    Toast.makeText(context , R.string.title_download_successful , Toast.LENGTH_SHORT).show()
+                }
+                progressBar.visibility = View.INVISIBLE
+                fab_gallery.isEnabled = true
             }
-
-            imageView.visibility = View.INVISIBLE
-            progressBar.visibility = View.INVISIBLE
-            fab_gallery.isEnabled = true
+        } else {
+            Toast.makeText(context , R.string.title_notification , Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -116,18 +120,23 @@ class HomeScreen : Fragment() , OnClicked {
     }
 
     private fun loadMore() {
-        statusLoadMore = false
-        CoroutineScope(Dispatchers.Main).launch {
-            fab_gallery.isEnabled = false
-            progress_bar.visibility = View.VISIBLE
+        if (isNetworkConnected()) {
+            statusLoadMore = false
+            CoroutineScope(Dispatchers.Main).launch {
+                fab_gallery.isEnabled = false
+                progress_bar.visibility = View.VISIBLE
 
-            homeViewModel.getData()
-            delay(1500)
+                homeViewModel.getData()
+                delay(1500)
 
-            progress_bar.visibility = View.INVISIBLE
-            statusLoadMore = true
-            fab_gallery.isEnabled = true
+                progress_bar.visibility = View.INVISIBLE
+                statusLoadMore = true
+                fab_gallery.isEnabled = true
+            }
+        } else {
+            Toast.makeText(context , R.string.title_notification , Toast.LENGTH_SHORT).show()
         }
+
     }
 
     private fun isNetworkConnected(): Boolean {

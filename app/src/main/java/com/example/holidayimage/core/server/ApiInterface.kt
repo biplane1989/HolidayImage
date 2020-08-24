@@ -13,7 +13,7 @@ interface ApiInterface {
     @GET("/photos/")
     suspend fun getPhotos(
         @Query("page") page: Int = 1,
-        @Query("per_page") perPage: Int = 12,
+        @Query("per_page") perPage: Int = 10,
         @Query("client_id") clientID: String = Constance.ID_API): ArrayList<UnsplashPhoto>
 
     @GET

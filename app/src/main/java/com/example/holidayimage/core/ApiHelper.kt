@@ -22,6 +22,4 @@ object ApiHelper {
         var newUrl = url + "&w=" + 300 + "&dpi=" + 1
         return ApiClient.getClient.downloadPhoto(newUrl)
     }
-
-
 }

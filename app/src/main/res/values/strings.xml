@@ -2,4 +2,10 @@
     <string name="app_name">Holiday Image</string>
     <string name="title_notification">Internet not connection !</string>
     <string name="title_load">L o a d</string>
+    <string name="title_download_successful">File Download Successful !</string>
+    <string name="title_download_unsuccessful">File Download Unsuccessful !</string>
+    <string name="messgess_dialog">Are you sure,You wanted delete image</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
+
 </resources>

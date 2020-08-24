@@ -61,6 +61,7 @@ class HomeScreen : Fragment() , OnClicked {
             tv_internet.visibility = View.VISIBLE
         }
         // go to gallery screen
+
         fab_gallery.setOnClickListener(View.OnClickListener {
             val directions = HomeScreenDirections.actionHoneToGallery()
             NavHostFragment.findNavController(this@HomeScreen).navigate(directions)

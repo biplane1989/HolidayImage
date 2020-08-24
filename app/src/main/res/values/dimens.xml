@@ -5,9 +5,11 @@
     <dimen name="height_progressbar">100dp</dimen>
     <dimen name="magrin_fab">15dp</dimen>
     <dimen name="scroll_barsize">15dp</dimen>
-    <dimen name="height_image_item">300dp</dimen>
-    <dimen name="size_image_progressbar">60dp</dimen>
+    <dimen name="height_image_item">250dp</dimen>
+    <dimen name="size_image_progressbar">70dp</dimen>
     <dimen name="text_size_load">35sp</dimen>
     <dimen name="margin_2dp">2dp</dimen>
     <dimen name="cardview_corner">5dp</dimen>
+    <dimen name="size_ic_download">35dp</dimen>
+    <dimen name="margin_ic_download">15dp</dimen>
 </resources>

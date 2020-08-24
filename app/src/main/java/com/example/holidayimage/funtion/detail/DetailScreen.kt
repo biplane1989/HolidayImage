@@ -59,8 +59,8 @@ class DetailScreen : Fragment() {
 
     private fun checkDeletedialog() {
         val alertDialogBuilder = context?.let { AlertDialog.Builder(it) }
-        alertDialogBuilder?.setMessage(Constance.MESSGESS_DIALOG)
-        alertDialogBuilder?.setPositiveButton(Constance.YES , object : DialogInterface.OnClickListener {
+        alertDialogBuilder?.setMessage(R.string.messgess_dialog)
+        alertDialogBuilder?.setPositiveButton(R.string.yes , object : DialogInterface.OnClickListener {
             override fun onClick(arg0: DialogInterface? , arg1: Int) {
                 detailViewModel.deleteImage()
                 val directions = DetailScreenDirections.actionDetailToGallery()
@@ -68,7 +68,7 @@ class DetailScreen : Fragment() {
             }
         })
 
-        alertDialogBuilder?.setNegativeButton(Constance.NO , object : DialogInterface.OnClickListener {
+        alertDialogBuilder?.setNegativeButton(R.string.no , object : DialogInterface.OnClickListener {
             override fun onClick(dialog: DialogInterface? , which: Int) {
             }
         })

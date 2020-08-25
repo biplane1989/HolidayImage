@@ -31,11 +31,11 @@
             app:popUpTo="@+id/fra_detail"
             app:popUpToInclusive="true" />
 
-        <action
-            android:id="@+id/action_gallery_to_home"
-            app:destination="@+id/fra_home"
-            app:popUpTo="@+id/fra_home"
-            app:popUpToInclusive="true" />
+<!--        <action-->
+<!--            android:id="@+id/action_gallery_to_home"-->
+<!--            app:destination="@+id/fra_home"-->
+<!--            app:popUpTo="@+id/fra_home"-->
+<!--            app:popUpToInclusive="true" />-->
     </fragment>
 
     <fragment
@@ -44,9 +44,9 @@
         android:label="detail screen"
         tools:layout="@layout/activity_detail_screen">
         <argument
-            android:name="id"
-            android:defaultValue="0"
-            app:argType="integer" />
+            android:name="url"
+            android:defaultValue=""
+            app:argType="string" />
         <action
             android:id="@+id/action_detail_to_gallery"
             app:destination="@+id/fra_gallery"

@@ -27,7 +27,7 @@ import kotlinx.android.synthetic.main.activity_detail_screen.*
 
 class DetailScreen : Fragment() {
 
-    private var idImage: Int = 0
+    private var url: String = ""
     private lateinit var detailViewModel: DetailViewModel
     private lateinit var detailBinding: ActivityDetailScreenBinding
 
@@ -44,9 +44,9 @@ class DetailScreen : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        idImage = arguments?.let { DetailScreenArgs.fromBundle(it).id }!!
+        url = arguments?.let { DetailScreenArgs.fromBundle(it).url }!!
 
-        detailViewModel.getImageById(idImage)
+        detailViewModel.getImageById(url)
 
         detailViewModel.getImage().observe(viewLifecycleOwner , Observer { image ->
             Glide.with(this).load(image.path).into(iv_detail)

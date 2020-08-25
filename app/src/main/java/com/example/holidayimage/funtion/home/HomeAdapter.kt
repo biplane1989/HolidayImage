@@ -33,7 +33,6 @@ class HomeAdapter(val onClicked: OnClicked) : ListAdapter<ImageItemView , HomeAd
         } else {
             super.submitList(ArrayList())
         }
-
     }
 
     class ViewHolder(itemView: View , val adapter: HomeAdapter) : RecyclerView.ViewHolder(itemView) {
@@ -46,9 +45,7 @@ class HomeAdapter(val onClicked: OnClicked) : ListAdapter<ImageItemView , HomeAd
             val imageItem = adapter.getItem(adapterPosition)
 
             progressImage.visibility = View.INVISIBLE
-
-
-
+            ivLoad.visibility = View.VISIBLE
 
             Glide.with(itemView.context).load(imageItem.imageItem.thumb).into(ivServer)
 
@@ -59,14 +56,12 @@ class HomeAdapter(val onClicked: OnClicked) : ListAdapter<ImageItemView , HomeAd
 
             } else {
                 if (imageItem.isDownloading) {
-                    //                ivLoad.isEnabled = false
                     ivLoad.visibility = View.INVISIBLE
                     progressImage.visibility = View.VISIBLE
                 }else{
                     ivLoad.visibility = View.VISIBLE
                     progressImage.visibility = View.INVISIBLE
                 }
-
             }
 
             ivLoad.setOnClickListener(View.OnClickListener {

@@ -27,17 +27,27 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class HomeScreen : Fragment() , OnClicked , ErrorDownload {
+class HomeScreen : Fragment() , OnClicked {
 
     val TAG = "001"
     lateinit var homeViewModel: HomeViewModel
     lateinit var homeBinding: ActivityHomeScreenBinding
     private lateinit var adapter: HomeAdapter
 
-    override fun onCreateView(inflater: LayoutInflater , container: ViewGroup? , savedInstanceState: Bundle?): View? {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel(activity!!.application)::class.java)
-        homeViewModel.setCallBack(this)
+        adapter = HomeAdapter(this)
+        homeViewModel.getListImage()?.observe(this , Observer { listImage ->
+            listImage?.let { adapter.submitList(ArrayList(listImage)) }
+            adapter.notifyDataSetChanged()
+            Log.d(TAG , "onCreate: list size: " + listImage.size)
+        })
+    }
+
+    override fun onCreateView(inflater: LayoutInflater , container: ViewGroup? , savedInstanceState: Bundle?): View? {
+
         homeBinding = DataBindingUtil.inflate(layoutInflater , R.layout.activity_home_screen , container , false)
         homeBinding.lifecycleOwner = this
         homeBinding.homeviewmodel = homeViewModel
@@ -46,7 +56,6 @@ class HomeScreen : Fragment() , OnClicked , ErrorDownload {
     }
 
     private fun init() {
-        adapter = HomeAdapter(this)
         rv_images.layoutManager = GridLayoutManager(context , 2 , RecyclerView.VERTICAL , false)
         rv_images.setHasFixedSize(true)
         rv_images.adapter = adapter
@@ -56,41 +65,20 @@ class HomeScreen : Fragment() , OnClicked , ErrorDownload {
 
     override fun onViewCreated(view: View , savedInstanceState: Bundle?) {
         super.onViewCreated(view , savedInstanceState)
+
         init()
-
-        CoroutineScope(Dispatchers.Main).launch {
-            homeViewModel.getListImage()?.observe(viewLifecycleOwner , Observer { listImage ->
-
-                listImage?.let { adapter.submitList(ArrayList(listImage)) }
-
-                Log.d(TAG , "getListSize: list size " + listImage.size)
-            })
-        }
+        homeViewModel.synchronizedData()
         // go to gallery screen
         fab_gallery.setOnClickListener(View.OnClickListener {
             val directions = HomeScreenDirections.actionHoneToGallery()
             NavHostFragment.findNavController(this@HomeScreen).navigate(directions)
         })
-//        homeViewModel.statusLoadMore.observe(viewLifecycleOwner , Observer {
-//            status = it
-//        })
     }
 
     // item clicked
     override fun onClicked(position: Int , imageItemView: ImageItemView , imageView: ImageView , progressBar: ProgressBar) {
-        CoroutineScope(Dispatchers.Main).launch {
-          /*  imageView.isEnabled = false
-            fab_gallery.isEnabled = false*/
-//            progressBar.visibility = View.VISIBLE
-            homeViewModel.isSaveImage(position , imageItemView)
-//            progressBar.visibility = View.INVISIBLE
-            //fab_gallery.isEnabled = true
-        }
-
+        homeViewModel.downloadImage(position)
     }
-
-//    var status: Boolean = true
-
 
     // Scorll list and loadmore data
     private fun initScrollListener() {
@@ -100,16 +88,12 @@ class HomeScreen : Fragment() , OnClicked , ErrorDownload {
                 super.onScrolled(recyclerView , dx , dy)
 
                 val gridLayoutManager: GridLayoutManager = homeBinding.rvImages.layoutManager as GridLayoutManager
-
-
-                //                if (homeViewModel.statusLoadMore) {
-                if (homeViewModel.isLoadmore()) {
+                if (homeViewModel.isLoadMore()) {
                     if (gridLayoutManager.findLastCompletelyVisibleItemPosition() == homeViewModel.getListSize() - 1) {
                         loadMore()
                     }
                 }
             }
-
             override fun onScrollStateChanged(recyclerView: RecyclerView , newState: Int) {
                 super.onScrollStateChanged(recyclerView , newState)
             }
@@ -124,15 +108,6 @@ class HomeScreen : Fragment() , OnClicked , ErrorDownload {
             progress_bar.visibility = View.INVISIBLE
             fab_gallery.isEnabled = true
         }
-    }
-
-
-    override fun errorDownloadImage() {
-        iv_download.isEnabled = true
-    }
-
-    override fun downloadImage() {
-        iv_download.visibility = View.INVISIBLE
     }
 }
 

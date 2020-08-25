@@ -9,12 +9,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.holidayimage.R
-import com.example.holidayimage.`object`.ImageGallery
+import com.example.holidayimage.`object`.ImageFile
 import java.util.concurrent.*
 
 
 class GalleryAdapter(val onClicked: OnGalleryClicked) :
-    ListAdapter<ImageGallery, GalleryAdapter.ViewHolder>(AsyncDifferConfig.Builder<ImageGallery>(GalleryDiffCallBack())
+    ListAdapter<ImageFile, GalleryAdapter.ViewHolder>(AsyncDifferConfig.Builder<ImageFile>(GalleryDiffCallBack())
         .setBackgroundThreadExecutor(Executors.newSingleThreadExecutor()).build()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GalleryAdapter.ViewHolder {

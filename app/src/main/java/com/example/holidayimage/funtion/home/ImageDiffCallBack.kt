@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.DiffUtil
 class ImageDiffCallBack : DiffUtil.ItemCallback<ImageItemView>() {
 
     override fun areItemsTheSame(oldItemView: ImageItemView , newItemView: ImageItemView): Boolean {
-        return oldItemView.imageItem.url == newItemView.imageItem.url
+        return oldItemView.imageItem == newItemView.imageItem
     }
 
     override fun areContentsTheSame(oldItemView: ImageItemView , newItemView: ImageItemView): Boolean {

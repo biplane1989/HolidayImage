@@ -3,6 +3,8 @@ package com.example.holidayimage.funtion.home
 import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
+import android.util.ArraySet
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -27,25 +29,18 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private var _images = ArrayList<ImageItemView>()
     private var statusLoadMore: Boolean = true
 
-    fun isLoadmore(): Boolean {
+    fun isLoadMore(): Boolean {
         return statusLoadMore
-    }
-
-    private lateinit var errorDownload: ErrorDownload
-
-    fun setCallBack(errorDownload: ErrorDownload) {
-        this.errorDownload = errorDownload
     }
 
     init {
         images.value = ArrayList()
-        //        getData()
         statusLoadMore = true
     }
 
     fun getListImage(): MutableLiveData<ArrayList<ImageItemView>>? {
         if (isNetworkConnected()) {
-            CoroutineScope(Dispatchers.Default).launch {
+            CoroutineScope(Dispatchers.Main).launch {
                 getData()
             }
             return images
@@ -53,34 +48,28 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             Toast.makeText(context , R.string.title_notification , Toast.LENGTH_SHORT).show()
             return null
         }
-
     }
 
     fun getListSize(): Int {
         return images.value!!.size
     }
 
-    suspend fun refresherData() {
-        page = 1
-        _images.clear()
-        getData()
-    }
-
     suspend fun getData() {
-        for (item in ApiHelper.getListPhoto(page)) {
-            _images.add(ImageItemView(item))
+        if (ApiHelper.getListPhoto(page) != null) {
+            for (item in ApiHelper.getListPhoto(page)!!) {
+                _images.add(ImageItemView(item))
+            }
+            page++;
+            statusLoadMore = true
+
+            images.postValue(_images)
+        } else {
+            Toast.makeText(context , R.string.server_error , Toast.LENGTH_SHORT).show()
         }
-        page++;
-
-        //            statusLoadMore.postValue(true)
-        statusLoadMore = true
-
-        images.postValue(_images)
     }
 
     suspend fun loadMore() {
         if (isNetworkConnected()) {
-            //            statusLoadMore.postValue(false)
             statusLoadMore = false
             getData()
 
@@ -89,60 +78,54 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    suspend fun isSaveImage(position: Int , imageItemView: ImageItemView) {
-
-        var imageItemView = _images.get(position).copy()
-        imageItemView.isDownloading = true
-
-        _images.set(position , imageItemView)
-        images.postValue(_images)
-
-        if (isNetworkConnected()) {
-            if (saveImage(context , imageItemView.imageItem , position) == null) {
-                //            imageView.isEnabled = true
-                //                errorDownload.errorDownloadImage()
-                Toast.makeText(context , R.string.title_download_unsuccessful , Toast.LENGTH_SHORT).show()
-            } else {
-             /*   synchronizedData()*/
-                //            imageView.visibility = View.INVISIBLE
-                //                errorDownload.downloadImage()
-                Toast.makeText(context , R.string.title_download_successful , Toast.LENGTH_SHORT).show()
-            }
-        } else {
-            Toast.makeText(context , R.string.title_notification , Toast.LENGTH_SHORT).show()
-        }
-        imageItemView = _images.get(position).copy()
-        imageItemView.isDownloading = false
-        imageItemView.imageItem.downloaded = FileDownloadManager.isDownloaded(imageItemView.imageItem)
-
-        _images.set(position , imageItemView)
-        images.postValue(_images)
-    }
-
-    suspend fun saveImage(context: Context , imageItem: ImageItem , position: Int): ImageFile? {
-        return FileDownloadManager.downloadImage(context , imageItem)
-    }
-
-   /* suspend fun synchronizedData() {
+    fun downloadImage(position: Int) {
         CoroutineScope(Dispatchers.Main).launch {
-            val newListImage = ArrayList<ImageItemView>()
-            for (image in _images) {
-                newListImage.add(image)
-            }
-            var position = 0
-            for (image in newListImage) {
-                if (FileDownloadManager.isDownloaded(ImageItem(image.imageItem.url , image.imageItem.thumb , image.imageItem.raw , image.imageItem.downloaded))) {
-                    val newImage = image.copy()
-                    newImage.imageItem.downloaded = true
-                    newListImage.set(position , newImage)
+            var imageItemView = _images.get(position).copy()
+            imageItemView.isDownloading = true
+
+            _images.set(position , imageItemView)
+            images.postValue(_images)
+
+            if (isNetworkConnected()) {
+                if (saveImage(context , imageItemView.imageItem) == null) {
+                    Toast.makeText(context , R.string.title_download_unsuccessful , Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context , R.string.title_download_successful , Toast.LENGTH_SHORT).show()
                 }
-                position++
+            } else {
+                Toast.makeText(context , R.string.title_notification , Toast.LENGTH_SHORT).show()
             }
-            _images = newListImage
+            imageItemView = _images.get(position).copy()
+            imageItemView.isDownloading = false
+            imageItemView.imageItem.downloaded = FileDownloadManager.isDownloaded(imageItemView.imageItem)
+
+            _images.set(position , imageItemView)
             images.postValue(_images)
         }
     }
-*/
+
+    fun synchronizedData() {
+        CoroutineScope(Dispatchers.Main).launch {
+            var position = 0;
+            for (image in _images) {
+                if (!FileDownloadManager.isDownloaded(image.imageItem)) {
+                    val newImage = _images.get(position).copy()
+
+                    newImage.imageItem.downloaded = false
+                    newImage.isDownloading = false
+
+                    _images.set(position , newImage)
+                }
+                position++
+            }
+            images.postValue(_images)
+        }
+    }
+
+    suspend fun saveImage(context: Context , imageItem: ImageItem): ImageFile? {
+        return FileDownloadManager.downloadImage(context , imageItem)
+    }
+
     private fun isNetworkConnected(): Boolean {
         val cm: ConnectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo()!!.isConnected()

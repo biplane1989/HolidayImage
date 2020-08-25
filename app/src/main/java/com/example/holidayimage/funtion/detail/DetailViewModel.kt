@@ -2,7 +2,7 @@ package com.example.holidayimage.funtion.detail
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.holidayimage.`object`.ImageGallery
+import com.example.holidayimage.`object`.ImageFile
 import com.example.holidayimage.core.FileDownloadManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -10,16 +10,16 @@ import kotlinx.coroutines.launch
 
 class DetailViewModel : ViewModel() {
 
-    private var imageDetail: MutableLiveData<ImageGallery> = MutableLiveData()
-    private lateinit var _imageDetail: ImageGallery
+    private var imageDetail: MutableLiveData<ImageFile> = MutableLiveData()
+    private lateinit var _imageDetail: ImageFile
 
-    fun getImage(): MutableLiveData<ImageGallery> {
+    fun getImage(): MutableLiveData<ImageFile> {
         return imageDetail
     }
 
-    fun getImageById(id: Int){
+    fun getImageById(url: String) {
         CoroutineScope(Dispatchers.Default).launch {
-            _imageDetail = FileDownloadManager.getImageById(id)
+            _imageDetail = FileDownloadManager.getImageByUrl(url)
             imageDetail.postValue(_imageDetail)
         }
     }

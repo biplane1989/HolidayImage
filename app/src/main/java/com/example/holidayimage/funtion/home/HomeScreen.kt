@@ -22,10 +22,7 @@ import com.example.holidayimage.R
 import com.example.holidayimage.databinding.ActivityHomeScreenBinding
 import kotlinx.android.synthetic.main.activity_home_screen.*
 import kotlinx.android.synthetic.main.item_home.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class HomeScreen : Fragment() , OnClicked {
 

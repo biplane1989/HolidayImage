@@ -29,6 +29,7 @@ abstract class ImageDatabase : RoomDatabase() {
 
         private fun buildDatabase(context: Context) =
             Room.databaseBuilder(context.applicationContext, ImageDatabase::class.java, Constance.DB_NAME)
+                .fallbackToDestructiveMigration()
                 .build()
     }
 

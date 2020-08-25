@@ -2,16 +2,18 @@ package com.example.holidayimage.core.db
 
 import com.example.holidayimage.`object`.ImageFile
 import com.example.holidayimage.core.db.entity.ImageEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 object DBFunction {
 
-    suspend fun saveImage(url: String , filePath: String): ImageFile? {
+    suspend fun saveImage(url: String , filePath: String): ImageFile?  {
         val imageEntity = ImageEntity(null , url , filePath)
         val id = ImageDatabase.getInstance().imageDAO().insert(imageEntity)
         if (id > 0) {
-            return ImageFile(url , filePath)
+             return ImageFile(url , filePath)
         } else {
-            return null;
+             return null
         }
     }
 
@@ -23,7 +25,7 @@ object DBFunction {
         ImageDatabase.getInstance().imageDAO().delete(imageFile.url)
     }
 
-    suspend fun getImageByUrl(url : String): ImageFile{
+    suspend fun getImageByUrl(url: String): ImageFile {
         val imageEntity = ImageDatabase.getInstance().imageDAO().getUserByUrl(url)
         return ImageFile(imageEntity.url , imageEntity.path)
     }

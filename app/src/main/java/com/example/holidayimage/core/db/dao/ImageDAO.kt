@@ -12,7 +12,7 @@ import com.example.holidayimage.core.db.entity.ImageEntity
 
     @Query("SELECT * FROM images") suspend fun getAll(): List<ImageEntity>
 
-    @Query("DELETE from images where url = :url") fun delete(url: String)
+    @Query("DELETE from images where url = :url") suspend fun delete(url: String)
 
     @Delete suspend fun delete(image: ImageEntity)
 

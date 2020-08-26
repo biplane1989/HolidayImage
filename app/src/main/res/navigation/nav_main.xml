@@ -30,12 +30,6 @@
             app:destination="@+id/fra_detail"
             app:popUpTo="@+id/fra_detail"
             app:popUpToInclusive="true" />
-
-<!--        <action-->
-<!--            android:id="@+id/action_gallery_to_home"-->
-<!--            app:destination="@+id/fra_home"-->
-<!--            app:popUpTo="@+id/fra_home"-->
-<!--            app:popUpToInclusive="true" />-->
     </fragment>
 
     <fragment

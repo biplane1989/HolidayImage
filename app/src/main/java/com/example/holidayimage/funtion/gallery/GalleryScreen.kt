@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.holidayimage.R
 import com.example.holidayimage.`object`.ImageFile
 import com.example.holidayimage.databinding.ActivityGalleryScreenBinding
+import com.example.holidayimage.funtion.home.HomeScreenDirections
 import kotlinx.android.synthetic.main.activity_gallery_screen.*
 
 class GalleryScreen : Fragment() , OnGalleryClicked {

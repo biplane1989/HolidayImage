@@ -38,8 +38,6 @@ class HomeScreen : Fragment() , OnClicked {
         adapter = HomeAdapter(this)
         homeViewModel.getListImage()?.observe(this , Observer { listImage ->
             listImage?.let { adapter.submitList(ArrayList(listImage)) }
-            adapter.notifyDataSetChanged()
-            Log.d(TAG , "onCreate: list size: " + listImage.size)
         })
     }
 
@@ -62,9 +60,9 @@ class HomeScreen : Fragment() , OnClicked {
 
     override fun onViewCreated(view: View , savedInstanceState: Bundle?) {
         super.onViewCreated(view , savedInstanceState)
-
         init()
         homeViewModel.synchronizedData()
+
         // go to gallery screen
         fab_gallery.setOnClickListener(View.OnClickListener {
             val directions = HomeScreenDirections.actionHoneToGallery()
@@ -74,7 +72,11 @@ class HomeScreen : Fragment() , OnClicked {
 
     // item clicked
     override fun onClicked(position: Int , imageItemView: ImageItemView , imageView: ImageView , progressBar: ProgressBar) {
-        homeViewModel.downloadImage(position)
+        CoroutineScope(Dispatchers.Main).launch {
+            fab_gallery.isEnabled = false
+            homeViewModel.downloadImage(position)
+            fab_gallery.isEnabled = true
+        }
     }
 
     // Scorll list and loadmore data
@@ -91,6 +93,7 @@ class HomeScreen : Fragment() , OnClicked {
                     }
                 }
             }
+
             override fun onScrollStateChanged(recyclerView: RecyclerView , newState: Int) {
                 super.onScrollStateChanged(recyclerView , newState)
             }

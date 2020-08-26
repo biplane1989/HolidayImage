@@ -1,5 +1,6 @@
 package com.example.holidayimage.funtion.home
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,6 @@ import java.util.concurrent.Executors
 class HomeAdapter(val onClicked: OnClicked) : ListAdapter<ImageItemView , HomeAdapter.ViewHolder>(
     AsyncDifferConfig.Builder(ImageDiffCallBack()).setBackgroundThreadExecutor(Executors.newSingleThreadExecutor()).build()
 ) {
-
     override fun onCreateViewHolder(parent: ViewGroup , viewType: Int): HomeAdapter.ViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_home , parent , false)
         return ViewHolder(itemView , this)
@@ -50,22 +50,21 @@ class HomeAdapter(val onClicked: OnClicked) : ListAdapter<ImageItemView , HomeAd
             Glide.with(itemView.context).load(imageItem.imageItem.thumb).into(ivServer)
 
             if (imageItem.imageItem.downloaded) {
-
                 ivLoad.visibility = View.INVISIBLE
                 progressImage.visibility = View.INVISIBLE
-
             } else {
                 if (imageItem.isDownloading) {
                     ivLoad.visibility = View.INVISIBLE
                     progressImage.visibility = View.VISIBLE
-                }else{
+                } else {
                     ivLoad.visibility = View.VISIBLE
                     progressImage.visibility = View.INVISIBLE
                 }
             }
 
-            ivLoad.setOnClickListener(View.OnClickListener {
+            ivLoad.setOnLongClickListener(View.OnLongClickListener {
                 onClicked.onClicked(adapterPosition , imageItem , ivLoad , progressImage)
+                true
             })
         }
     }

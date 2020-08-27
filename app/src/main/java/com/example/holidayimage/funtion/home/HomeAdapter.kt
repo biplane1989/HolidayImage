@@ -1,18 +1,17 @@
 package com.example.holidayimage.funtion.home
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.holidayimage.R
-import java.util.concurrent.Executors
+import java.util.concurrent.*
 
 class HomeAdapter(val onClicked: OnClicked) : ListAdapter<ImageItemView , HomeAdapter.ViewHolder>(
     AsyncDifferConfig.Builder(ImageDiffCallBack()).setBackgroundThreadExecutor(Executors.newSingleThreadExecutor()).build()
@@ -40,14 +39,15 @@ class HomeAdapter(val onClicked: OnClicked) : ListAdapter<ImageItemView , HomeAd
         val ivServer: ImageView = itemView.findViewById(R.id.iv_server)
         val ivLoad: ImageView = itemView.findViewById(R.id.iv_download)
         val progressImage: ProgressBar = itemView.findViewById(R.id.progress_image)
+        private var mLastClickTime = System.currentTimeMillis()
+        private val CLICK_TIME_INTERVAL: Long = 300
 
         fun bind(onClicked: OnClicked) {
             val imageItem = adapter.getItem(adapterPosition)
-
             progressImage.visibility = View.INVISIBLE
             ivLoad.visibility = View.VISIBLE
 
-            Glide.with(itemView.context).load(imageItem.imageItem.thumb).into(ivServer)
+            Glide.with(itemView.context).load(imageItem.imageItem.thumb).transition(DrawableTransitionOptions.withCrossFade()).dontAnimate().into(ivServer)
 
             if (imageItem.imageItem.downloaded) {
                 ivLoad.visibility = View.GONE
@@ -63,6 +63,11 @@ class HomeAdapter(val onClicked: OnClicked) : ListAdapter<ImageItemView , HomeAd
             }
 
             ivLoad.setOnClickListener(View.OnClickListener {
+                val now = System.currentTimeMillis()
+                if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
+                    return@OnClickListener
+                }
+                mLastClickTime = now
                 onClicked.onClicked(adapterPosition , imageItem , ivLoad , progressImage)
             })
         }

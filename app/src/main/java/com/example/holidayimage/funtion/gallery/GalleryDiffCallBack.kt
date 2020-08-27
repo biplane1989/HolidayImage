@@ -6,11 +6,11 @@ import com.example.holidayimage.`object`.ImageFile
 
 class GalleryDiffCallBack : DiffUtil.ItemCallback<ImageFile>() {
 
-    override fun areItemsTheSame(oldItem: ImageFile, newItem: ImageFile): Boolean {
-        return oldItem.url == newItem.url
+    override fun areItemsTheSame(oldItem: ImageFile , newItem: ImageFile): Boolean {
+        return oldItem == newItem
     }
 
-    override fun areContentsTheSame(oldItem: ImageFile, newItem: ImageFile): Boolean {
+    override fun areContentsTheSame(oldItem: ImageFile , newItem: ImageFile): Boolean {
         return oldItem.equals(newItem)
     }
 }

@@ -17,20 +17,6 @@ object ApiClient {
         get() {
             val gson = GsonBuilder().setLenient().create()
 
-//            /* ConnectionSpec.MODERN_TLS is the default value */
-//            var tlsSpecs = Arrays.asList(ConnectionSpec.MODERN_TLS)
-//
-//            /* providing backwards-compatibility for API lower than Lollipop: */
-//            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-//                tlsSpecs = Arrays.asList(ConnectionSpec.COMPATIBLE_TLS)
-//            }
-
-//            val interceptor = HttpLoggingInterceptor()
-//            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-//            val client = OkHttpClient.Builder()
-//                .connectionSpecs(tlsSpecs)
-//                .addInterceptor(interceptor).build()
-
             var client: OkHttpClient? = null
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 try {

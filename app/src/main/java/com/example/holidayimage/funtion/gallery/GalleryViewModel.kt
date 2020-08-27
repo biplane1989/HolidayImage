@@ -14,7 +14,7 @@ class GalleryViewModel : ViewModel() {
     private var _images = ArrayList<ImageFile>()
 
     init {
-        images.value = ArrayList()
+        images.value = _images
     }
 
     fun getListImage(): MutableLiveData<ArrayList<ImageFile>> {
@@ -23,7 +23,6 @@ class GalleryViewModel : ViewModel() {
 
     fun initData() {
         CoroutineScope(Dispatchers.Default).launch {
-            _images.clear()
             for (item in FileDownloadManager.getAllListImage()) {
                 _images.add(item)
             }
@@ -31,4 +30,13 @@ class GalleryViewModel : ViewModel() {
         }
     }
 
+    fun synchronizedData() {
+        CoroutineScope(Dispatchers.Default).launch {
+            val newListImage = ArrayList<ImageFile>()
+            for (item in FileDownloadManager.getAllListImage()) {
+                newListImage.add(item)
+            }
+            images.postValue(newListImage)
+        }
+    }
 }

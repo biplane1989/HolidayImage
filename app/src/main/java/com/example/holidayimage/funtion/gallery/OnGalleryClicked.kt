@@ -4,5 +4,5 @@ import com.example.holidayimage.`object`.ImageFile
 
 interface OnGalleryClicked {
 
-    fun onClick(imageFile: ImageFile, positition: Int)
+    fun onClick(imageFile: ImageFile)
 }

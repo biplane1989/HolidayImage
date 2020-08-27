@@ -7,7 +7,7 @@ import kotlinx.coroutines.withContext
 
 object DBFunction {
 
-    suspend fun saveImage(url: String , filePath: String): ImageFile?  {
+    suspend fun saveImage(url: String , filePath: String): ImageFile? {
         val imageEntity = ImageEntity(null , url , filePath)
         val id = ImageDatabase.getInstance().imageDAO().insert(imageEntity)
         return if (id > 0) {
@@ -26,7 +26,9 @@ object DBFunction {
     }
 
     suspend fun getImageByUrl(url: String): ImageFile {
-        val imageEntity = ImageDatabase.getInstance().imageDAO().getUserByUrl(url)
-        return ImageFile(imageEntity.url , imageEntity.path)
+        url?.let {
+            val imageEntity = ImageDatabase.getInstance().imageDAO().getUserByUrl(url)
+            return ImageFile(imageEntity.url , imageEntity.path)
+        }
     }
 }

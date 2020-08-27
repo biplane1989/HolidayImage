@@ -2,14 +2,17 @@ package com.example.holidayimage.funtion.detail
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
 import com.example.holidayimage.R
@@ -54,9 +57,10 @@ class DetailScreen : Fragment() {
         alertDialogBuilder?.setMessage(R.string.messgess_dialog)
         alertDialogBuilder?.setPositiveButton(R.string.yes , object : DialogInterface.OnClickListener {
             override fun onClick(arg0: DialogInterface? , arg1: Int) {
+
                 detailViewModel.deleteImage()
-                val directions = DetailScreenDirections.actionDetailToGallery()
-                NavHostFragment.findNavController(this@DetailScreen).navigate(directions)
+                iv_detail.visibility = View.GONE
+                tv_notification.visibility = View.VISIBLE
             }
         })
 

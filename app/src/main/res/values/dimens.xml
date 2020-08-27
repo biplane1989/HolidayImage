@@ -12,4 +12,5 @@
     <dimen name="cardview_corner">3dp</dimen>
     <dimen name="size_ic_download">35dp</dimen>
     <dimen name="margin_ic_download">15dp</dimen>
+    <dimen name="text_notification_size">30sp</dimen>
 </resources>

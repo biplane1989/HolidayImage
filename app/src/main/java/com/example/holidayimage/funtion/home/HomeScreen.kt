@@ -26,12 +26,10 @@ import com.example.holidayimage.databinding.ActivityHomeScreenBinding
 import kotlinx.android.synthetic.main.activity_home_screen.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class HomeScreen : Fragment() , OnClicked {
 
-    val TAG = "001"
     lateinit var homeViewModel: HomeViewModel
     lateinit var homeBinding: ActivityHomeScreenBinding
     private lateinit var adapter: HomeAdapter
@@ -43,21 +41,15 @@ class HomeScreen : Fragment() , OnClicked {
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel(activity!!.application)::class.java)
         adapter = HomeAdapter(this)
 
-        if (homeViewModel.isNetworkConnected()){
-            loadMore()
-        }
-//        CoroutineScope(Dispatchers.Main).launch {
-            registerNetworkBroadcastForNougat()
-            homeViewModel.getListImage()?.observe(this , Observer { listImage ->
-
-                Log.d(TAG , "onCreate: list size " + listImage.size)
-                listImage?.let {
-                    adapter.submitList(ArrayList(listImage))
-                    fab_gallery?.let { fab_gallery.visibility = View.VISIBLE }
-                    networkStatus = true
-                }
-            })
-//        }
+        loadMore()
+        registerNetworkBroadcastForNougat()
+        homeViewModel.getListImage()?.observe(this , Observer { listImage ->
+            listImage?.let {
+                Log.d("001" , "onCreate: list size : " + listImage.size)
+                adapter.submitList(ArrayList(listImage))
+                fab_gallery?.let { fab_gallery.visibility = View.VISIBLE }
+            }
+        })
     }
 
     override fun onCreateView(inflater: LayoutInflater , container: ViewGroup? , savedInstanceState: Bundle?): View? {
@@ -106,10 +98,11 @@ class HomeScreen : Fragment() , OnClicked {
         if (homeViewModel.isNetworkConnected()) {
             CoroutineScope(Dispatchers.Main).launch {
                 imageView.let { imageView.visibility = View.GONE }
-                //                fab_gallery?.let { fab_gallery.isEnabled = false }
-                delay(150)
-                homeViewModel.downloadImage(position)
-                //                fab_gallery?.let { fab_gallery.isEnabled = true }
+                fab_gallery?.let { fab_gallery.isEnabled = false }
+                val imageItem = homeViewModel.startDownload(position)
+                homeViewModel.downloading(imageItem)
+                homeViewModel.downloaded(position)
+                fab_gallery?.let { fab_gallery.isEnabled = true }
             }
         } else {
             Toast.makeText(context , R.string.title_notification , Toast.LENGTH_SHORT).show()
@@ -134,12 +127,17 @@ class HomeScreen : Fragment() , OnClicked {
     }
 
     private fun loadMore() {
-        CoroutineScope(Dispatchers.Main).launch {
-            fab_gallery?.let { fab_gallery.isEnabled = false }
-            progress_bar?.let { progress_bar.visibility = View.VISIBLE }
-            homeViewModel.loadMore()
-            progress_bar?.let { progress_bar.visibility = View.GONE }
-            fab_gallery?.let { fab_gallery.isEnabled = true }
+        if (homeViewModel.isNetworkConnected()) {
+            CoroutineScope(Dispatchers.Main).launch {
+                fab_gallery?.let { fab_gallery.isEnabled = false }
+                progress_bar?.let { progress_bar.visibility = View.VISIBLE }
+                homeViewModel.loadMore()
+                progress_bar?.let { progress_bar.visibility = View.GONE }
+                fab_gallery?.let { fab_gallery.isEnabled = true }
+            }
+        } else {
+            Toast.makeText(context , R.string.title_notification , Toast.LENGTH_SHORT).show()
+            networkStatus = true
         }
     }
 
@@ -147,18 +145,10 @@ class HomeScreen : Fragment() , OnClicked {
         override fun onReceive(contxt: Context? , intent: Intent?) {
             try {
                 if (isOnline(context!!)) {
-//                    if (homeViewModel.getListSize() == 0 && !networkStatus) {
-//                        iv_error_internet?.let { iv_error_internet.visibility = View.GONE }
+                    if (homeViewModel.getListSize() == 0 && networkStatus) {
+                        iv_error_internet?.let { iv_error_internet.visibility = View.GONE }
                         loadMore()
-                        //                        homeViewModel.getListImage()?.observe(viewLifecycleOwner , Observer { listImage ->
-                        //                            Log.d(TAG , "onCreate: network")
-                        //                            listImage?.let {
-                        //                                adapter.submitList(ArrayList(listImage))
-                        //                                fab_gallery?.let { fab_gallery.visibility = View.VISIBLE }
-                        //                            }
-                        //                            Log.d(TAG , "onCreate: list size " + listImage.size)
-                        //                        })
-//                    }
+                    }
                 }
             } catch (e: NullPointerException) {
                 e.printStackTrace()
@@ -180,7 +170,6 @@ class HomeScreen : Fragment() , OnClicked {
 
     private fun registerNetworkBroadcastForNougat() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-
             context?.registerReceiver(networkChangeReceiver , IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -200,6 +189,5 @@ class HomeScreen : Fragment() , OnClicked {
         super.onDestroy()
         unregisterNetworkChanges()
     }
-
 }
 

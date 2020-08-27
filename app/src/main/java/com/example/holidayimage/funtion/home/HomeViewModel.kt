@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     private val context = getApplication<Application>().applicationContext
-    private var page: Int = 1;
+    private var page: Int = 1
     private var images: MutableLiveData<ArrayList<ImageItemView>> = MutableLiveData()
     private var _images = ArrayList<ImageItemView>()
     private var statusLoadMore: Boolean = true
@@ -57,7 +57,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     suspend fun getData() {
         if (ApiHelper.getListPhoto(page) != null) {
             for (item in ApiHelper.getListPhoto(page)!!) {
-                _images.add(ImageItemView(item))
+                val imageItemView = ImageItemView(item)
+                _images.add(imageItemView)
             }
             page++;
             statusLoadMore = true
@@ -78,29 +79,29 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun downloadImage(position: Int) {
-        CoroutineScope(Dispatchers.Main).launch {
-            var imageItemView = _images.get(position).copy()
-            imageItemView.isDownloading = true
+    suspend fun downloadImage(position: Int) {
+        if (isNetworkConnected()) {
+            CoroutineScope(Dispatchers.Main).launch {
+                var imageItemView = _images.get(position).copy()
+                imageItemView.isDownloading = true
+                _images.set(position , imageItemView)
+                images.postValue(_images)
 
-            _images.set(position , imageItemView)
-            images.postValue(_images)
-
-            if (isNetworkConnected()) {
                 if (saveImage(context , imageItemView.imageItem) == null) {
                     Toast.makeText(context , R.string.title_download_unsuccessful , Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(context , R.string.title_download_successful , Toast.LENGTH_SHORT).show()
                 }
-            } else {
-                Toast.makeText(context , R.string.title_notification , Toast.LENGTH_SHORT).show()
-            }
-            imageItemView = _images.get(position).copy()
-            imageItemView.isDownloading = false
-            imageItemView.imageItem.downloaded = FileDownloadManager.isDownloaded(imageItemView.imageItem)
 
-            _images.set(position , imageItemView)
-            images.postValue(_images)
+                imageItemView = _images.get(position).copy()
+                imageItemView.isDownloading = false
+                imageItemView.imageItem.downloaded = FileDownloadManager.isDownloaded(imageItemView.imageItem)
+
+                _images.set(position , imageItemView)
+                images.postValue(_images)
+            }
+        } else {
+            Toast.makeText(context , R.string.title_notification , Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -109,11 +110,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             var position = 0;
             for (image in _images) {
                 if (!FileDownloadManager.isDownloaded(image.imageItem)) {
-                    val newImage = _images.get(position).copy()
 
-                    newImage.imageItem.downloaded = false
+                    val newImage = image.copy()
                     newImage.isDownloading = false
-
+                    val newImageItem = newImage.imageItem.copy()
+                    newImageItem.downloaded = false
+                    newImage.imageItem = newImageItem
                     _images.set(position , newImage)
                 }
                 position++

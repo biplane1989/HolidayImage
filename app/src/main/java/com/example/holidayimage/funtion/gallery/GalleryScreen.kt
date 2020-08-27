@@ -16,12 +16,16 @@ import com.example.holidayimage.`object`.ImageFile
 import com.example.holidayimage.databinding.ActivityGalleryScreenBinding
 import com.example.holidayimage.funtion.home.HomeScreenDirections
 import kotlinx.android.synthetic.main.activity_gallery_screen.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class GalleryScreen : Fragment() , OnGalleryClicked {
 
     private lateinit var galleryViewModel: GalleryViewModel
     private lateinit var galleryBinding: ActivityGalleryScreenBinding
     private lateinit var adapter: GalleryAdapter
+    private var positition: Int = -1
 
     override fun onCreateView(inflater: LayoutInflater , container: ViewGroup? , savedInstanceState: Bundle?): View? {
 
@@ -39,8 +43,13 @@ class GalleryScreen : Fragment() , OnGalleryClicked {
         super.onViewCreated(view , savedInstanceState)
         init()
         galleryViewModel.getListImage().observe(viewLifecycleOwner , Observer { listImage ->
-            adapter.submitList(ArrayList(listImage))
+            CoroutineScope(Dispatchers.Main).launch {
+                adapter.submitList(ArrayList(listImage))
+                rv_gallery.layoutManager?.scrollToPosition(positition - 1)
+            }
         })
+
+
     }
 
     override fun onStart() {
@@ -56,7 +65,8 @@ class GalleryScreen : Fragment() , OnGalleryClicked {
 
     }
 
-    override fun onClick(imageFile: ImageFile) {
+    override fun onClick(imageFile: ImageFile , positition: Int) {
+        this.positition = positition
         val directions = GalleryScreenDirections.actionGalleryToDetail().setUrl(imageFile.url)
         NavHostFragment.findNavController(this).navigate(directions)
     }

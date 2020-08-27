@@ -24,7 +24,7 @@ object ApiHelper {
     }
 
     suspend fun getPhoto(url: String): ResponseBody {
-        val newUrl = "$url&w=300&dpi=1"
+        val newUrl = "$url&w=1080&dpi=1"
         return ApiClient.getClient.downloadPhoto(newUrl)
     }
 }

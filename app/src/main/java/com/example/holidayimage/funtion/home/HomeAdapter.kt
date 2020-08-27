@@ -50,11 +50,11 @@ class HomeAdapter(val onClicked: OnClicked) : ListAdapter<ImageItemView , HomeAd
             Glide.with(itemView.context).load(imageItem.imageItem.thumb).into(ivServer)
 
             if (imageItem.imageItem.downloaded) {
-                ivLoad.visibility = View.INVISIBLE
+                ivLoad.visibility = View.GONE
                 progressImage.visibility = View.INVISIBLE
             } else {
                 if (imageItem.isDownloading) {
-                    ivLoad.visibility = View.INVISIBLE
+                    ivLoad.visibility = View.GONE
                     progressImage.visibility = View.VISIBLE
                 } else {
                     ivLoad.visibility = View.VISIBLE
@@ -62,9 +62,8 @@ class HomeAdapter(val onClicked: OnClicked) : ListAdapter<ImageItemView , HomeAd
                 }
             }
 
-            ivLoad.setOnLongClickListener(View.OnLongClickListener {
+            ivLoad.setOnClickListener(View.OnClickListener {
                 onClicked.onClicked(adapterPosition , imageItem , ivLoad , progressImage)
-                true
             })
         }
     }

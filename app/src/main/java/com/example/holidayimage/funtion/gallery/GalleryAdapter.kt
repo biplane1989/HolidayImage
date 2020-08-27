@@ -38,7 +38,7 @@ class GalleryAdapter(val onClicked: OnGalleryClicked) :
             Glide.with(itemView.context).load(imageItem.path).into(ivGallery)
 
             itemView.setOnClickListener(View.OnClickListener {
-                onClicked.onClick(imageItem)
+                onClicked.onClick(imageItem, adapterPosition)
             })
         }
     }

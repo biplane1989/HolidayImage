@@ -20,6 +20,7 @@ import com.example.holidayimage.core.FileDownloadManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -34,20 +35,21 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     init {
-        images.value = ArrayList()
+        images.value = _images
         statusLoadMore = true
     }
 
     fun getListImage(): MutableLiveData<ArrayList<ImageItemView>>? {
-        if (isNetworkConnected()) {
-            CoroutineScope(Dispatchers.Main).launch {
-                getData()
-            }
+        return images
+        /*if (isNetworkConnected()) {
+            //            CoroutineScope(Dispatchers.Main).launch {
+            //                getData()
+            //            }
             return images
         } else {
             Toast.makeText(context , R.string.title_notification , Toast.LENGTH_SHORT).show()
             return null
-        }
+        }*/
     }
 
     fun getListSize(): Int {
@@ -79,7 +81,16 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    suspend fun downloadImage(position: Int) {
+    fun loadDataStatus() {
+        CoroutineScope(Dispatchers.Main).launch {
+            if (_images.size == 0) {
+                loadMore()
+            }
+        }
+    }
+
+
+    suspend fun downloadImage(position: Int) = withContext(Dispatchers.Default) {
         if (isNetworkConnected()) {
             CoroutineScope(Dispatchers.Main).launch {
                 var imageItemView = _images.get(position).copy()
@@ -128,8 +139,13 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         return FileDownloadManager.downloadImage(context , imageItem)
     }
 
-    private fun isNetworkConnected(): Boolean {
+    fun isNetworkConnected(): Boolean {
         val cm: ConnectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo()!!.isConnected()
+    }
+
+    suspend fun checkStatusServer(): Boolean {
+        if (ApiHelper.getListPhoto(1) == null) return false
+        return true
     }
 }

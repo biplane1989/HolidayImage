@@ -118,7 +118,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     fun synchronizedData() {
         CoroutineScope(Dispatchers.Main).launch {
-            var position = 0;
+            var position = 0
             for (image in _images) {
                 if (!FileDownloadManager.isDownloaded(image.imageItem)) {
 

@@ -61,6 +61,7 @@ class DetailScreen : Fragment() {
                 detailViewModel.deleteImage()
                 iv_detail.visibility = View.GONE
                 tv_notification.visibility = View.VISIBLE
+                fab_delete.visibility = View.GONE
             }
         })
 

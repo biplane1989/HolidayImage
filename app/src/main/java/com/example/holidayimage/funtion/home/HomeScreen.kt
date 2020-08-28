@@ -36,8 +36,6 @@ class HomeScreen : Fragment() , OnClicked {
     private var networkStatus = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel(activity!!.application)::class.java)
         adapter = HomeAdapter(this)
 
@@ -45,9 +43,7 @@ class HomeScreen : Fragment() , OnClicked {
         registerNetworkBroadcastForNougat()
         homeViewModel.getListImage()?.observe(this , Observer { listImage ->
             listImage?.let {
-                Log.d("001" , "onCreate: list size : " + listImage.size)
                 adapter.submitList(ArrayList(listImage))
-                fab_gallery?.let { fab_gallery.visibility = View.VISIBLE }
             }
         })
     }
@@ -99,10 +95,12 @@ class HomeScreen : Fragment() , OnClicked {
             CoroutineScope(Dispatchers.Main).launch {
                 imageView.let { imageView.visibility = View.GONE }
                 fab_gallery?.let { fab_gallery.isEnabled = false }
+                fab_gallery?.let { fab_gallery.visibility = View.GONE }
                 val imageItem = homeViewModel.startDownload(position)
                 homeViewModel.downloading(imageItem)
                 homeViewModel.downloaded(position)
                 fab_gallery?.let { fab_gallery.isEnabled = true }
+                fab_gallery?.let { fab_gallery.visibility = View.VISIBLE }
             }
         } else {
             Toast.makeText(context , R.string.title_notification , Toast.LENGTH_SHORT).show()
@@ -130,10 +128,12 @@ class HomeScreen : Fragment() , OnClicked {
         if (homeViewModel.isNetworkConnected()) {
             CoroutineScope(Dispatchers.Main).launch {
                 fab_gallery?.let { fab_gallery.isEnabled = false }
+                fab_gallery?.let { fab_gallery.visibility = View.GONE }
                 progress_bar?.let { progress_bar.visibility = View.VISIBLE }
                 homeViewModel.loadMore()
                 progress_bar?.let { progress_bar.visibility = View.GONE }
                 fab_gallery?.let { fab_gallery.isEnabled = true }
+                fab_gallery?.let { fab_gallery.visibility = View.VISIBLE }
             }
         } else {
             Toast.makeText(context , R.string.title_notification , Toast.LENGTH_SHORT).show()
@@ -149,6 +149,7 @@ class HomeScreen : Fragment() , OnClicked {
                         iv_error_internet?.let { iv_error_internet.visibility = View.GONE }
                         loadMore()
                     }
+                    homeViewModel.resetIsLoadMore()
                 }
             } catch (e: NullPointerException) {
                 e.printStackTrace()

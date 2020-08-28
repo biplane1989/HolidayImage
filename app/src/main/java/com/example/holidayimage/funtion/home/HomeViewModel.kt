@@ -27,6 +27,11 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         return statusLoadMore
     }
 
+    fun resetIsLoadMore() {
+        statusLoadMore = true
+        images.postValue(_images)
+    }
+
     init {
         images.value = _images
         statusLoadMore = true
@@ -41,12 +46,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     suspend fun getData() {
-        if (ApiHelper.getListPhoto(page) != null) {
-            for (item in ApiHelper.getListPhoto(page)!!) {
+        if (ApiHelper.getListPhoto(page).size > 1) {
+            for (item in ApiHelper.getListPhoto(page)) {
                 val imageItemView = ImageItemView(item)
                 _images.add(imageItemView)
             }
-            page++;
+            page++
             statusLoadMore = true
 
             images.postValue(_images)
@@ -75,11 +80,13 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     suspend fun downloading(imageItem: ImageItem) {
+
         if (saveImage(context , imageItem) == null) {
             Toast.makeText(context , R.string.title_download_unsuccessful , Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(context , R.string.title_download_successful , Toast.LENGTH_SHORT).show()
         }
+
     }
 
     suspend fun downloaded(position: Int) {

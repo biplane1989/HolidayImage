@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Holiday Image</string>
     <string name="title_notification">Internet not connection !</string>
-    <string name="server_error">Server Error !</string>
+    <string name="server_error">Server or networking Error !</string>
     <string name="title_load">L o a d</string>
     <string name="title_download_successful">File Download Successful !</string>
     <string name="title_download_unsuccessful">File Download Unsuccessful !</string>

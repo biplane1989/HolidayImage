@@ -7,7 +7,7 @@ import okhttp3.ResponseBody
 
 object ApiHelper {
 
-    suspend fun getListPhoto(page: Int): List<ImageItem>? {
+    suspend fun getListPhoto(page: Int): List<ImageItem> {
         return try {
             val listImage: ArrayList<UnsplashPhoto> = ApiClient.getClient.getPhotos(page)
             val listImageItem = ArrayList<ImageItem>()
@@ -18,7 +18,8 @@ object ApiHelper {
             }
             listImageItem
         } catch (e: Exception) {
-            null
+            val listNull = ArrayList<ImageItem>()
+            listNull
         }
     }
 

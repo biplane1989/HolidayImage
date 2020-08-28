@@ -40,7 +40,7 @@ class HomeAdapter(val onClicked: OnClicked) : ListAdapter<ImageItemView , HomeAd
         val ivLoad: ImageView = itemView.findViewById(R.id.iv_download)
         val progressImage: ProgressBar = itemView.findViewById(R.id.progress_image)
         private var mLastClickTime = System.currentTimeMillis()
-        private val CLICK_TIME_INTERVAL: Long = 300
+        private val CLICK_TIME_INTERVAL: Long = 800
 
         fun bind(onClicked: OnClicked) {
             val imageItem = adapter.getItem(adapterPosition)

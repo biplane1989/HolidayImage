@@ -69,11 +69,12 @@ class HomeAdapter(val onClicked: OnClicked) : ListAdapter<ImageItemView , HomeAd
             }
 
             ivLoad.setOnClickListener(View.OnClickListener {
-                val now = System.currentTimeMillis()
-                if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
-                    return@OnClickListener
-                }
-                mLastClickTime = now
+//                val now = System.currentTimeMillis()
+//                if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
+//                    return@OnClickListener
+//                }
+//                mLastClickTime = now
+//                ivLoad.visibility = View.GONE
                 onClicked.onClicked(adapterPosition , imageItem , ivLoad , progressImage)
             })
         }

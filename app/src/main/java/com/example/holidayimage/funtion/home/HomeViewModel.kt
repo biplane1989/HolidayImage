@@ -13,6 +13,7 @@ import com.example.holidayimage.core.ApiHelper
 import com.example.holidayimage.core.FileDownloadManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
@@ -70,32 +71,31 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun startDownload(position: Int): ImageItem {
-        val imageItemView = _images.get(position).copy()
-        imageItemView.isDownloading = true
-        _images.set(position , imageItemView)
-        images.postValue(_images)
+    fun downloadImage(position: Int) {
+        CoroutineScope(Dispatchers.Main).launch {
+            if (_images.get(position).clicked) {
+                return@launch
+            }
+            _images.get(position).clicked = true
+            var imageItemView = _images.get(position).copy()
+            imageItemView.isDownloading = true
+            _images.set(position , imageItemView)
 
-        return imageItemView.imageItem
-    }
+            images.postValue(_images)
+            if (saveImage(context , imageItemView.imageItem) == null) {
+                Toast.makeText(context , R.string.title_download_unsuccessful , Toast.LENGTH_SHORT).show()
+                _images.get(position).clicked = false
+            } else {
+                Toast.makeText(context , R.string.title_download_successful , Toast.LENGTH_SHORT).show()
+            }
 
-    suspend fun downloading(imageItem: ImageItem) {
+            imageItemView = _images.get(position).copy()
+            imageItemView.isDownloading = false
+            imageItemView.imageItem.downloaded = FileDownloadManager.isDownloaded(imageItemView.imageItem)
 
-        if (saveImage(context , imageItem) == null) {
-            Toast.makeText(context , R.string.title_download_unsuccessful , Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(context , R.string.title_download_successful , Toast.LENGTH_SHORT).show()
+            _images.set(position , imageItemView)
+            images.postValue(_images)
         }
-
-    }
-
-    suspend fun downloaded(position: Int) {
-        val imageItemView = _images.get(position).copy()
-        imageItemView.isDownloading = false
-        imageItemView.imageItem.downloaded = FileDownloadManager.isDownloaded(imageItemView.imageItem)
-
-        _images.set(position , imageItemView)
-        images.postValue(_images)
     }
 
     fun synchronizedData() {

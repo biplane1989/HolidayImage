@@ -8,7 +8,7 @@
     <dimen name="height_image_item">250dp</dimen>
     <dimen name="size_image_progressbar">70dp</dimen>
     <dimen name="text_size_load">35sp</dimen>
-    <dimen name="margin_image">1dp</dimen>
+    <dimen name="margin_image">0.5dp</dimen>
     <dimen name="cardview_corner">3dp</dimen>
     <dimen name="size_ic_download">35dp</dimen>
     <dimen name="margin_ic_download">15dp</dimen>

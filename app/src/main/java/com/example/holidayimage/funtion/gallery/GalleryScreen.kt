@@ -34,7 +34,6 @@ class GalleryScreen : Fragment() , OnGalleryClicked {
         galleryViewModel.getListImage().observe(this , Observer { listImage ->
             CoroutineScope(Dispatchers.Main).launch {
                 adapter.submitList(ArrayList(listImage))
-                rv_gallery?.let {}
             }
         })
     }
@@ -59,7 +58,6 @@ class GalleryScreen : Fragment() , OnGalleryClicked {
         rv_gallery.layoutManager = GridLayoutManager(context , 2 , RecyclerView.VERTICAL , false)
         rv_gallery.setHasFixedSize(true)
         rv_gallery.adapter = adapter
-
     }
 
     override fun onClick(imageFile: ImageFile) {
